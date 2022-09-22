@@ -15,7 +15,7 @@ class Bullet:
         self.radius = 3
         self.time_alive = 0
 
-    def keep_in_map(self):
+    def keep_in_map(self) -> None:
         if self.x >= self.screen_width:
             self.x = -self.radius
         elif self.x + self.radius <= 0:
@@ -26,13 +26,13 @@ class Bullet:
         elif self.y + self.radius <= 0:
             self.y = self.screen_height
 
-    def update(self):
+    def update(self) -> None:
         self.x += -self.speed * sin(radians(self.angle))
         self.y += -self.speed * cos(radians(self.angle))
         self.keep_in_map()
         self.time_alive += 1
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface) -> None:
         if self.is_white:
             pygame.draw.circle(screen, (255, 255, 255), (self.x, self.y), self.radius)
         else:

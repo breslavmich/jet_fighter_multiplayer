@@ -21,7 +21,8 @@ PROTOCOL_CLIENT = {
 
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
-    "error_msg": "ERROR"
+    "error_msg": "ERROR",
+    "connection_limit": "MAX_CONNECTED"
 }
 
 # Other constants

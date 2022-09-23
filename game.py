@@ -13,6 +13,8 @@ class Game:
         self.planes = []
         self.load_images()
         self.initialise_jets()
+        self.score_0 = 0
+        self.score_1 = 0
 
     def load_images(self) -> None:
         self.image_black = pygame.image.load(BLACK_PLANE_IMG)

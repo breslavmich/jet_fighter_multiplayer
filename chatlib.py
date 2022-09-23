@@ -13,16 +13,18 @@ DATA_DELIMITER = "#"  # Delimiter in the data part of the message
 # Protocol Messages
 # In this dictionary we will have all the client and server command names
 PROTOCOL_CLIENT = {
-    "login_msg": "LOGIN",
-    "logout_msg": "LOGOUT",
+    "disconnect_msg": "DISCONNECT",
     "initial_details": "GET_GAME_DATA",
-    "game_status_request": "GET_STATUS"
+    "game_status_request": "GET_STATUS",
+    "shoot_command": "SHOOT"
 }
 
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK",
     "error_msg": "ERROR",
-    "connection_limit": "MAX_CONNECTED"
+    "connection_limit": "MAX_CONNECTED",
+    'winner_msg': "WINNER",
+    "connected_successfully": "CONNECT_SUCCESS"
 }
 
 # Other constants

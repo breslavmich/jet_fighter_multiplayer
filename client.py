@@ -78,7 +78,6 @@ class Client:
         ip.bind('<FocusIn>', on_enter_ip)
         ip.bind('<FocusOut>', on_leave_ip)
 
-
         tk.Frame(root, width=295, height=2, bg='black').pack()
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
@@ -103,7 +102,8 @@ class Client:
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
-        bt = tk.Button(root, width=27, pady=7, text='Connect', bg='#7b7b7b', fg='white', border=0, font=('Calibri Bold', 14))
+        bt = tk.Button(root, width=27, pady=7, text='Connect', bg='#7b7b7b', fg='white', border=0,
+                       font=('Calibri Bold', 14))
         bt.pack()
 
         root.mainloop()

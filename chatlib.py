@@ -16,7 +16,9 @@ PROTOCOL_CLIENT = {
     "disconnect_msg": "DISCONNECT",
     "initial_details": "GET_GAME_DATA",
     "game_status_request": "GET_STATUS",
-    "shoot_command": "SHOOT"
+    "shoot_command": "SHOOT",
+    "key_down_msg": "KEY_PRESSED",
+    "key_up_msg": "KEY_RELEASED"
 }
 
 PROTOCOL_SERVER = {
@@ -24,7 +26,8 @@ PROTOCOL_SERVER = {
     "error_msg": "ERROR",
     "connection_limit": "MAX_CONNECTED",
     'winner_msg': "WINNER",
-    "connected_successfully": "CONNECT_SUCCESS"
+    "connected_successfully": "CONNECT_SUCCESS",
+    "ok_msg": "OK"
 }
 
 # Other constants

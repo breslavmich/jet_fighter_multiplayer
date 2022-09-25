@@ -1,3 +1,4 @@
+import math
 import random
 import pygame
 from math import sin, cos, radians
@@ -56,7 +57,7 @@ class Jet:
         screen.blit(rotated_image, (self.x, self.y))
         self.draw_bullets(screen)
 
-    def update(self) -> None:
+    def update(self, enemy_bullets: list, hits_list: list) -> None:
         self.go_forward()
         self.keep_in_map()
         if self.rotate_amount > 7:
@@ -64,6 +65,14 @@ class Jet:
         elif self.rotate_amount < -7:
             self.rotate_amount = -7
         self.angle += self.rotate_amount
+
+        self.check_hits(enemy_bullets, hits_list)
+
+    def check_hits(self, enemy_bullets: list, hits_list: list):
+        for bullet in enemy_bullets:
+            if math.dist((self.x, self.y), (bullet.x, bullet.y)) < 10 + bullet.radius:
+                hits_list.append(bullet)
+                enemy_bullets.remove(bullet)
 
     def shoot(self) -> None:
         bullet = Bullet(self.screen_width, self.screen_height, int(self.x + self.image.get_width() / 2),

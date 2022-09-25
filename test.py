@@ -26,7 +26,7 @@ while not finish:
             if event.key == pygame.K_d or event.key == pygame.K_a:
                 jet.rotate_amount = 0
     screen.fill((130, 130, 130))
-    jet.update()
+    jet.update([], [])
     jet.draw(screen)
     pygame.display.flip()
     clock.tick(30)

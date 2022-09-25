@@ -1,15 +1,17 @@
 import socket
+
+import pygame
 import select
 from game import Game
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SERVER_IP, SERVER_PORT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SERVER_LISTEN_IP, SERVER_PORT, ROTATE_AMOUNT
 import chatlib
 
 
-class Server(Game):
+class Server:
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.game = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.listen_ip = SERVER_IP
+        self.listen_ip = SERVER_LISTEN_IP
         self.port = SERVER_PORT
         self.messages_to_send = []
         self.players = []
@@ -44,15 +46,31 @@ class Server(Game):
         self.players.remove(disconnected_socket)
         disconnected_socket.close()
 
-    def handle_shoot_message(self, client_socket: socket.socket):
+    def handle_shoot_message(self, client_socket: socket.socket) -> None:
         player_id = self.players.index(client_socket)
-        self.planes[player_id].shoot()
+        self.game.planes[player_id].shoot()
+
+    def handle_client_key_down(self, client_socket: socket.socket, data: str) -> None:
+        try:
+            data = int(data)
+        except:
+            return
+        plane_num = self.game.planes.index(client_socket)
+        if plane_num == 0:
+            if data == pygame.K_LEFT:
+                self.game.planes[plane_num].rotate_amount = ROTATE_AMOUNT
+            elif data == pygame.K_RIGHT:
+                self.game.planes[plane_num].rotate_amount = -ROTATE_AMOUNT
+        elif plane_num == 1:
+            pass
 
     def handle_message(self, client_socket: socket.socket, command: str, data: str) -> None:
         if command == chatlib.PROTOCOL_CLIENT['disconnect_msg']:
             self.disconnected_player(client_socket)
         elif command == chatlib.PROTOCOL_CLIENT['shoot_command']:
             self.handle_shoot_message(client_socket)
+        elif command == chatlib.PROTOCOL_CLIENT['key_down_msg']:
+            self.handle_client_key_down(client_socket, data)
 
     def start(self) -> None:
         while True:

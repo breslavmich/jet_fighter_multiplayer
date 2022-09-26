@@ -19,7 +19,9 @@ class Server:
 
     def setup_socket(self):
         try:
-            self.__server_socket.bind((self.listen_ip, self.port))
+            print(self.__server_socket)
+            address = (self.listen_ip, self.port)
+            self.__server_socket.bind(address)
             self.__server_socket.listen()
             print("[SERVER] Listening for connections...")
         except socket.error as e:
@@ -85,6 +87,9 @@ class Server:
                         player_id = len(self.players)
                         self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['connected_successfully'],
                                                     str(player_id))
+                        self.players.append(client_socket)
+                        if player_id == 1:
+                            self.build_and_send_message(self.players[0], chatlib.PROTOCOL_SERVER['game_starting_message'], '')
                 else:
                     command, data = self.recv_message_and_parse(current_socket)
                     try:
@@ -97,4 +102,8 @@ class Server:
                 if current_socket in write_list:
                     if current_socket in self.players:
                         current_socket.send(data.encode())
-                        self.messages_to_send.remove(current_socket)
+                        self.messages_to_send.remove(message)
+
+
+server = Server()
+server.start()

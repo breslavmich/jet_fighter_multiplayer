@@ -25,16 +25,18 @@ class Game:
         self.image_white = pygame.image.load(WHITE_PLANE_IMG)
 
     def initialise_jets(self, positions: list = None) -> None:
+        if len(self.planes) != 0:
+            return
         if not positions or len(positions) < 4:
-            self.planes[0] = Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                 plane_image=self.image_white, is_white=True)
-            self.planes[1] = Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                 plane_image=self.image_black, is_white=False)
+            self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
+                                   plane_image=self.image_white, is_white=True))
+            self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
+                                   plane_image=self.image_black, is_white=False))
         else:
-            self.planes[0] = Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                 plane_image=self.image_white, is_white=True, x=positions[0], y=positions[1])
-            self.planes[1] = Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                 plane_image=self.image_black, is_white=False, x=positions[2], y=positions[3])
+            self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
+                                   plane_image=self.image_white, is_white=True, x=positions[0], y=positions[1]))
+            self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
+                                   plane_image=self.image_black, is_white=False, x=positions[2], y=positions[3]))
 
     def initialise_window(self):
         screen_size = (self.screen_width, self.screen_height)

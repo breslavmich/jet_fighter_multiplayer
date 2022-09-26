@@ -2,6 +2,7 @@ import os
 
 BLACK_PLANE_IMG = os.path.join('images', 'black-jet.webp')
 WHITE_PLANE_IMG = os.path.join('images', 'white-jet.webp')
+LOADING_IMG = os.path.join('images', 'loading.gif')
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500

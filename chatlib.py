@@ -27,7 +27,8 @@ PROTOCOL_SERVER = {
     "connection_limit": "MAX_CONNECTED",
     'winner_msg': "WINNER",
     "connected_successfully": "CONNECT_SUCCESS",
-    "ok_msg": "OK"
+    "ok_msg": "OK",
+    "game_starting_message": "GAME_STARTING"
 }
 
 # Other constants

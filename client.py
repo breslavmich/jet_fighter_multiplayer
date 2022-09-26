@@ -1,5 +1,10 @@
+import os.path
 import socket
-from constants import SERVER_IP, SERVER_PORT
+import threading
+import time
+
+from ImageLabel import ImageLabel
+from constants import SERVER_IP, SERVER_PORT, LOADING_IMG
 import chatlib
 import tkinter as tk
 from tkinter import messagebox
@@ -38,6 +43,8 @@ class Client:
                 data = int(data)
                 if data == 0 or data == 1:
                     self.id = data
+            elif cmd == chatlib.PROTOCOL_SERVER['connection_limit']:
+                raise Exception("Game is full.")
             else:
                 raise Exception("Invalid connection message:", cmd, data)
 
@@ -104,6 +111,16 @@ class Client:
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
 
+        def wait_start_msg(result: list):
+            global destroy_screen
+            cmd, data = self.recv_message_and_parse()
+            if cmd != chatlib.PROTOCOL_SERVER['game_starting_message']:
+                messagebox.showerror("Game Start Error", "Error while waiting for another player to connect.")
+                result.append(True)
+                connect_and_start()
+            result.append(True)
+            return 1
+
         def connect_and_start():
             ip_txt = ip.get()
             port_txt = port.get()
@@ -125,12 +142,27 @@ class Client:
             root.destroy()
             if self.id == 0:
                 waiting_screen = tk.Tk()
-
+                waiting_screen.geometry("500x500")
+                waiting_screen.overrideredirect(True)
+                waiting_screen.eval('tk::PlaceWindow . center')
+                result = []
+                wait = threading.Thread(target=wait_start_msg, args=[result])
+                wait.start()
+                tk.Label(text="Waiting for opponent to connect", font=('Calibri Bold', 25)).pack()
+                img = ImageLabel()
+                img.pack()
+                img.load(LOADING_IMG)
+                while True:
+                    waiting_screen.update()
+                    waiting_screen.update_idletasks()
+                    if result:
+                        waiting_screen.destroy()
+                        break
+                    time.sleep(0.01)
 
         bt = tk.Button(root, width=27, pady=7, text='Connect', bg='#7b7b7b', fg='white', border=0,
                        font=('Calibri Bold', 14), command=connect_and_start)
         bt.pack()
-
         root.mainloop()
 
 

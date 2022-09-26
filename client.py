@@ -3,6 +3,7 @@ from constants import SERVER_IP, SERVER_PORT
 import chatlib
 import tkinter as tk
 from tkinter import messagebox
+import ipaddress
 
 
 class Client:
@@ -41,7 +42,7 @@ class Client:
                 raise Exception("Invalid connection message:", cmd, data)
 
         except Exception as e:
-            return "Connection Error!!!" + str(e)
+            return "Connection Error!!! " + str(e)
 
     def startup_screen(self):
         root = tk.Tk()
@@ -102,8 +103,32 @@ class Client:
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
         tk.Label(root, text='', bg='#fff').pack()
+
+        def connect_and_start():
+            ip_txt = ip.get()
+            port_txt = port.get()
+            try:
+                ipaddress.ip_address(ip_txt)
+            except:
+                messagebox.showerror("Invalid IP", "This IP address is invalid")
+                return
+            self.server_ip = ip_txt
+            if not port_txt.isnumeric() or port_txt == '' or port_txt is None or not 0 <= int(port_txt) <= 65535:
+                messagebox.showerror("Type Error", "Port must be a number between 0 and 65,535")
+                return
+            self.server_port = int(port_txt)
+            status = self.connect()
+            if status:
+                messagebox.showerror("Error", status)
+                return
+
+            root.destroy()
+            if self.id == 0:
+                waiting_screen = tk.Tk()
+
+
         bt = tk.Button(root, width=27, pady=7, text='Connect', bg='#7b7b7b', fg='white', border=0,
-                       font=('Calibri Bold', 14))
+                       font=('Calibri Bold', 14), command=connect_and_start)
         bt.pack()
 
         root.mainloop()

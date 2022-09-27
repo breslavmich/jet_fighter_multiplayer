@@ -27,7 +27,7 @@ class Client:
 
     def recv_message_and_parse(self) -> tuple:
         try:
-            full_msg = self.__socket.recv(2048).decode()
+            full_msg = self.__socket.recv(4096).decode()
             cmd, data = chatlib.parse_message(full_msg)
             print("[{}] -> [SERVER]:  {}".format(self.__socket.getpeername(), full_msg))
             return cmd, data
@@ -199,17 +199,16 @@ class Client:
             return None
 
     def handle_key_press(self, key: int):
-        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS):
+        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS) \
+                or key == pygame.K_SPACE:
             self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_down_msg'], str(key))
 
     def handle_key_release(self, key: int):
-        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS) or key == pygame.K_SPACE:
+        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS):
             self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_up_msg'], str(key))
 
     def start(self):
         self.startup_screen()
-        if not self.request_game_obj():
-            exit()
         init_data = self.request_initial_data()
         if not init_data:
             messagebox.showerror('Data error', 'Could\'nt get game data')
@@ -221,16 +220,20 @@ class Client:
         self.game.initialise_window()
         run = True
         while run:
-            self.request_game_obj()
+            key_up_down = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                 elif event.type == pygame.KEYDOWN:
                     key = event.key
                     self.handle_key_press(key)
+                    key_up_down = True
                 elif event.type == pygame.KEYUP:
                     key = event.key
                     self.handle_key_release(key)
+                    key_up_down = True
+            if not key_up_down:
+                self.request_game_obj()
             self.game.draw()
 
 

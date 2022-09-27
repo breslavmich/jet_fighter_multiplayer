@@ -88,7 +88,7 @@ class Jet:
                 self.bullets.remove(bullet)
 
     def to_dict(self) -> dict:
-        description = vars(self)
+        description = vars(self).copy()
         desc_bullets = []
         try:
             del description['image']

@@ -1,9 +1,11 @@
 import json
 import socket
+import threading
+
 import pygame
 import select
 from game import Game
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SERVER_LISTEN_IP, SERVER_PORT, ROTATE_AMOUNT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SERVER_LISTEN_IP, SERVER_PORT, ROTATE_AMOUNT, FPS
 import chatlib
 
 
@@ -16,6 +18,7 @@ class Server:
         self.messages_to_send = []
         self.players = []
         self.setup_socket()
+        self.game_running = True
 
     def setup_socket(self):
         try:
@@ -57,7 +60,7 @@ class Server:
             data = int(data)
         except:
             return
-        plane_num = self.game.planes.index(client_socket)
+        plane_num = self.players.index(client_socket)
         if plane_num == 0:
             if data == pygame.K_LEFT:
                 self.game.planes[plane_num].rotate_amount = ROTATE_AMOUNT
@@ -89,7 +92,14 @@ class Server:
         elif command == chatlib.PROTOCOL_CLIENT['initial_details']:
             self.handle_game_init_request(client_socket)
 
+    def update_game(self):
+        while self.game_running:
+            self.game.update()
+            self.game.clock.tick(FPS)
+
     def start(self) -> None:
+        pygame.init()
+        threading.Thread(target=self.update_game).start()
         while True:
             if self.game.hits:
                 for bullet in self.game.hits:

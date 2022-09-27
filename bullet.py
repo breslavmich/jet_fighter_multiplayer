@@ -37,3 +37,15 @@ class Bullet:
             pygame.draw.circle(screen, (255, 255, 255), (self.x, self.y), self.radius)
         else:
             pygame.draw.circle(screen, (0, 0, 0), (self.x, self.y), self.radius)
+
+    def to_dict(self):
+        return vars(self)
+
+    def data_from_dict(self, description_dict: dict) -> None:
+        self.x = description_dict['x']
+        self.y = description_dict['y']
+        self.angle = description_dict['angle']
+        self.speed = description_dict['speed']
+        self.is_white = description_dict['is_white']
+        self.radius = description_dict['radius']
+        self.time_alive = description_dict['time_alive']

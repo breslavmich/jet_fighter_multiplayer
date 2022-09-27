@@ -28,7 +28,9 @@ PROTOCOL_SERVER = {
     'winner_msg': "WINNER",
     "connected_successfully": "CONNECT_SUCCESS",
     "ok_msg": "OK",
-    "game_starting_message": "GAME_STARTING"
+    "game_starting_message": "GAME_STARTING",
+    "game_status_response": "STATUS_RESPONSE",
+    "initial_data_response": "START_DATA"
 }
 
 # Other constants

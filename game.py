@@ -4,15 +4,12 @@ from jet import Jet
 
 
 class Game:
-    def __init__(self, screen_width: int, screen_height: int):
+    def __init__(self, screen_width: int, screen_height: int, plane_positions: list = None):
         pygame.init()
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.image_black = None
-        self.image_white = None
         self.planes = []
-        self.load_images()
-        self.initialise_jets()
+        self.initialise_jets(plane_positions)
         self.score_0 = 0
         self.score_1 = 0
         self.screen = None
@@ -20,23 +17,21 @@ class Game:
         self.font = pygame.font.Font('freesansbold.ttf', 32)
         self.hits = []
 
-    def load_images(self) -> None:
-        self.image_black = pygame.image.load(BLACK_PLANE_IMG)
-        self.image_white = pygame.image.load(WHITE_PLANE_IMG)
-
     def initialise_jets(self, positions: list = None) -> None:
+        image_black = pygame.image.load(BLACK_PLANE_IMG)
+        image_white = pygame.image.load(WHITE_PLANE_IMG)
         if len(self.planes) != 0:
             return
         if not positions or len(positions) < 4:
             self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                   plane_image=self.image_white, is_white=True))
+                                   plane_image=image_white, is_white=True))
             self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                   plane_image=self.image_black, is_white=False))
+                                   plane_image=image_black, is_white=False))
         else:
             self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                   plane_image=self.image_white, is_white=True, x=positions[0], y=positions[1]))
+                                   plane_image=image_white, is_white=True, x=positions[0], y=positions[1]))
             self.planes.append(Jet(screen_width=self.screen_width, screen_height=self.screen_height,
-                                   plane_image=self.image_black, is_white=False, x=positions[2], y=positions[3]))
+                                   plane_image=image_black, is_white=False, x=positions[2], y=positions[3]))
 
     def initialise_window(self):
         screen_size = (self.screen_width, self.screen_height)
@@ -58,7 +53,21 @@ class Game:
         pygame.display.flip()
         self.clock.tick(FPS)
 
+    def get_init_data(self):
+        return {'width': self.screen_width,
+                'height': self.screen_height,
+                'planes_pos': [self.planes[0].x, self.planes[0].y, self.planes[1].x, self.planes[1].y]}
+
     def update(self):
         for i in range(len(self.planes)):
             plane = self.planes[i]
             plane.update(self.planes[1 - i].bullets, self.hits)
+
+    def up_to_date_game_data(self):
+        description_dict = {
+            'score_0': self.score_0,
+            'score_1': self.score_1,
+        }
+        planes = [plane.to_dict() for plane in self.planes]
+        description_dict['planes'] = planes
+        return description_dict

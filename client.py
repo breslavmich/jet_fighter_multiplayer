@@ -1,8 +1,12 @@
+import codecs
+import json
 import os.path
+import pickle
 import socket
 import threading
 import time
 
+import game
 from ImageLabel import ImageLabel
 from constants import SERVER_IP, SERVER_PORT, LOADING_IMG
 import chatlib
@@ -142,7 +146,7 @@ class Client:
             root.destroy()
             if self.id == 0:
                 waiting_screen = tk.Tk()
-                waiting_screen.geometry("500x500")
+                waiting_screen.geometry("500x400")
                 waiting_screen.overrideredirect(True)
                 waiting_screen.eval('tk::PlaceWindow . center')
                 result = []
@@ -165,6 +169,56 @@ class Client:
         bt.pack()
         root.mainloop()
 
+    def request_game_obj(self) -> None or int:
+        try:
+            self.build_and_send_message(chatlib.PROTOCOL_CLIENT['game_status_request'], '')
+        except socket.error:
+            return None
+        cmd, data = self.recv_message_and_parse()
+        if cmd != chatlib.PROTOCOL_SERVER['game_status_response']:
+            return None
+        try:
+            game_data = json.loads(data)
+            self.game.score_0 = game_data['score_0']
+            self.game.score_1 = game_data['score_1']
+            for i in range(len(self.game.planes)):
+                self.game.planes[i].data_from_dict(game_data['planes'][i])
+            return 1
+        except:
+            return None
+
+    def request_initial_data(self) -> dict or None:
+        try:
+            self.build_and_send_message(chatlib.PROTOCOL_CLIENT['initial_details'], '')
+        except socket.error:
+            return None
+        cmd, data = self.recv_message_and_parse()
+        if cmd != chatlib.PROTOCOL_SERVER['initial_data_response']:
+            return None
+        try:
+            data = json.loads(data)
+            return data
+        except:
+            return None
+
+    def start(self):
+        self.startup_screen()
+        if not self.request_game_obj():
+            exit()
+        init_data = self.request_initial_data()
+        if not init_data:
+            messagebox.showerror('Data error', 'Could\'nt get game data')
+            exit()
+        screen_width = init_data['width']
+        screen_height = init_data['height']
+        plane_pos = init_data['planes_pos']
+        self.game = game.Game(screen_width, screen_height, plane_pos)
+        self.game.initialise_window()
+        while True:
+            self.request_game_obj()
+
+            self.game.draw()
+
 
 client = Client()
-client.startup_screen()
+client.start()

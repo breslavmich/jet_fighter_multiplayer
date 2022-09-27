@@ -86,3 +86,26 @@ class Jet:
 
             if bullet.time_alive > 200:
                 self.bullets.remove(bullet)
+
+    def to_dict(self) -> dict:
+        description = vars(self)
+        desc_bullets = []
+        del description['image']
+        del description['screen_width']
+        del description['screen_height']
+        for bullet in description['bullets']:
+            desc_bullets.append(bullet.to_dict())
+        description['bullets'] = desc_bullets
+        return description
+
+    def data_from_dict(self, description_dict: dict) -> None:
+        self.x = description_dict['x']
+        self.y = description_dict['y']
+
+        self.angle = description_dict['angle']
+        self.speed = description_dict['speed']
+        self.rotate_amount = description_dict['rotate_amount']
+
+        self.is_white = description_dict['is_white']
+        for i in range(len(self.bullets)):
+            self.bullets[i].data_from_dict(description_dict['bullets'][i])

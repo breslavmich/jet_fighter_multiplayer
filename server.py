@@ -1,3 +1,6 @@
+import codecs
+import json
+import pickle
 import socket
 
 import pygame
@@ -66,6 +69,14 @@ class Server:
         elif plane_num == 1:
             pass
 
+    def handle_status_message(self, client_socket: socket.socket):
+        game_str = json.dumps(self.game.up_to_date_game_data())
+        self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['game_status_response'], game_str)
+
+    def handle_game_init_request(self, client_socket: socket.socket):
+        initial_data = json.dumps(self.game.get_init_data())
+        self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['initial_data_response'], initial_data)
+
     def handle_message(self, client_socket: socket.socket, command: str, data: str) -> None:
         if command == chatlib.PROTOCOL_CLIENT['disconnect_msg']:
             self.disconnected_player(client_socket)
@@ -73,6 +84,8 @@ class Server:
             self.handle_shoot_message(client_socket)
         elif command == chatlib.PROTOCOL_CLIENT['key_down_msg']:
             self.handle_client_key_down(client_socket, data)
+        elif command == chatlib.PROTOCOL_CLIENT['game_status_request']:
+            self.handle_status_message(client_socket)
 
     def start(self) -> None:
         while True:

@@ -1,14 +1,11 @@
-import codecs
 import json
-import os.path
-import pickle
 import socket
 import threading
 import time
-
+import pygame.event
 import game
 from ImageLabel import ImageLabel
-from constants import SERVER_IP, SERVER_PORT, LOADING_IMG
+from constants import SERVER_IP, SERVER_PORT, LOADING_IMG, WHITE_CONTROLS, BLACK_CONTROLS
 import chatlib
 import tkinter as tk
 from tkinter import messagebox
@@ -201,6 +198,14 @@ class Client:
         except:
             return None
 
+    def handle_key_press(self, key: int):
+        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS):
+            self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_down_msg'], str(key))
+
+    def handle_key_release(self, key: int):
+        if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS) or key == pygame.K_SPACE:
+            self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_up_msg'], str(key))
+
     def start(self):
         self.startup_screen()
         if not self.request_game_obj():
@@ -214,11 +219,21 @@ class Client:
         plane_pos = init_data['planes_pos']
         self.game = game.Game(screen_width, screen_height, plane_pos)
         self.game.initialise_window()
-        while True:
+        run = True
+        while run:
             self.request_game_obj()
-
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                elif event.type == pygame.KEYDOWN:
+                    key = event.key
+                    self.handle_key_press(key)
+                elif event.type == pygame.KEYUP:
+                    key = event.key
+                    self.handle_key_release(key)
             self.game.draw()
 
 
-client = Client()
-client.start()
+if __name__ == '__main__':
+    client = Client()
+    client.start()

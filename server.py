@@ -1,8 +1,5 @@
-import codecs
 import json
-import pickle
 import socket
-
 import pygame
 import select
 from game import Game
@@ -67,7 +64,12 @@ class Server:
             elif data == pygame.K_RIGHT:
                 self.game.planes[plane_num].rotate_amount = -ROTATE_AMOUNT
         elif plane_num == 1:
-            pass
+            if data == pygame.K_a:
+                self.game.planes[plane_num].rotate_amount = ROTATE_AMOUNT
+            elif data == pygame.K_d:
+                self.game.planes[plane_num].rotate_amount = -ROTATE_AMOUNT
+        if data == pygame.K_SPACE:
+            self.game.planes[plane_num].shoot()
 
     def handle_status_message(self, client_socket: socket.socket):
         game_str = json.dumps(self.game.up_to_date_game_data())
@@ -80,15 +82,21 @@ class Server:
     def handle_message(self, client_socket: socket.socket, command: str, data: str) -> None:
         if command == chatlib.PROTOCOL_CLIENT['disconnect_msg']:
             self.disconnected_player(client_socket)
-        elif command == chatlib.PROTOCOL_CLIENT['shoot_command']:
-            self.handle_shoot_message(client_socket)
         elif command == chatlib.PROTOCOL_CLIENT['key_down_msg']:
             self.handle_client_key_down(client_socket, data)
         elif command == chatlib.PROTOCOL_CLIENT['game_status_request']:
             self.handle_status_message(client_socket)
+        elif command == chatlib.PROTOCOL_CLIENT['initial_details']:
+            self.handle_game_init_request(client_socket)
 
     def start(self) -> None:
         while True:
+            if self.game.hits:
+                for bullet in self.game.hits:
+                    if bullet.is_white:
+                        self.game.score_0 += 1
+                    else:
+                        self.game.score_1 += 1
             read_list, write_list, error_list = select.select([self.__server_socket] + self.players, self.players, [])
             for current_socket in read_list:
                 if current_socket is self.__server_socket:
@@ -102,7 +110,8 @@ class Server:
                                                     str(player_id))
                         self.players.append(client_socket)
                         if player_id == 1:
-                            self.build_and_send_message(self.players[0], chatlib.PROTOCOL_SERVER['game_starting_message'], '')
+                            self.build_and_send_message(self.players[0],
+                                                        chatlib.PROTOCOL_SERVER['game_starting_message'], '')
                 else:
                     command, data = self.recv_message_and_parse(current_socket)
                     try:

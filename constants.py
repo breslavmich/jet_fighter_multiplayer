@@ -1,4 +1,5 @@
 import os
+import pygame
 
 BLACK_PLANE_IMG = os.path.join('images', 'black-jet.webp')
 WHITE_PLANE_IMG = os.path.join('images', 'white-jet.webp')
@@ -17,3 +18,6 @@ FPS = 30
 SCREEN_COLOR = (130, 130, 130)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+
+WHITE_CONTROLS = [pygame.K_LEFT, pygame.K_RIGHT]
+BLACK_CONTROLS = [pygame.K_a, pygame.K_d]

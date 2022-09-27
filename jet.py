@@ -90,9 +90,12 @@ class Jet:
     def to_dict(self) -> dict:
         description = vars(self)
         desc_bullets = []
-        del description['image']
-        del description['screen_width']
-        del description['screen_height']
+        try:
+            del description['image']
+            del description['screen_width']
+            del description['screen_height']
+        except:
+            pass
         for bullet in description['bullets']:
             desc_bullets.append(bullet.to_dict())
         description['bullets'] = desc_bullets

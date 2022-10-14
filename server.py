@@ -40,13 +40,18 @@ class Server:
             exit()
 
     def build_and_send_message(self, client_socket: socket.socket, command: str, data: str) -> None:
-        message = chatlib.build_message(command, data)
+        message = chatlib.build_message(command, data) + chatlib.END_OF_MESSAGE
         self.messages_to_send.append((client_socket, message))
         print("[SERVER] -> [{}]:  {}".format(client_socket.getpeername(), message))
 
     def recv_message_and_parse(self, client_socket: socket.socket) -> tuple:
         try:
-            full_msg = client_socket.recv(1024).decode()
+            full_msg = ''
+            while True:
+                char = client_socket.recv(1).decode()
+                if char == chatlib.END_OF_MESSAGE:
+                    break
+                full_msg += char
             cmd, data = chatlib.parse_message(full_msg)
             print("[{}] -> [SERVER]:  {}".format(client_socket.getpeername(), full_msg))
             return cmd, data
@@ -55,6 +60,7 @@ class Server:
 
     def disconnected_player(self, disconnected_socket: socket.socket) -> None:
         if not self.winner:
+            print("HERE???")
             winner_id = 1 - self.players.index(disconnected_socket)
             self.winner = winner_id
         self.players.remove(disconnected_socket)
@@ -121,6 +127,7 @@ class Server:
 
     def handle_message(self, client_socket: socket.socket, command: str, data: str) -> None:
         if command == chatlib.PROTOCOL_CLIENT['disconnect_msg']:
+            print("?????")
             self.disconnected_player(client_socket)
         elif command == chatlib.PROTOCOL_CLIENT['key_down_msg']:
             self.handle_client_key_down(client_socket, data)
@@ -172,10 +179,12 @@ class Server:
                 else:
                     command, data = self.recv_message_and_parse(current_socket)
                     if command is None:
+                        print("NONOON")
                         self.disconnected_player(current_socket)
                     try:
                         self.handle_message(current_socket, command, data)
                     except socket.error:
+                        print("ERROROROR")
                         self.disconnected_player(current_socket)
 
             for message in self.messages_to_send:

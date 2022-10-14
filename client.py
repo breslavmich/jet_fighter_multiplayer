@@ -22,13 +22,18 @@ class Client:
         self.server_port = SERVER_PORT
 
     def build_and_send_message(self, command: str, data: str) -> None:
-        message = chatlib.build_message(command, data)
+        message = chatlib.build_message(command, data) + chatlib.END_OF_MESSAGE
         self.__socket.send(message.encode())
         print("[SERVER] -> [{}]:  {}".format(self.__socket.getpeername(), message))
 
     def recv_message_and_parse(self) -> tuple:
         try:
-            full_msg = self.__socket.recv(4096).decode()
+            full_msg = ''
+            while True:
+                char = self.__socket.recv(1).decode()
+                if char == chatlib.END_OF_MESSAGE:
+                    break
+                full_msg += char
             cmd, data = chatlib.parse_message(full_msg)
             print("[{}] -> [SERVER]:  {}".format(self.__socket.getpeername(), full_msg))
             return cmd, data

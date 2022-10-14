@@ -15,7 +15,8 @@ def rot_center(image, angle):
 
 
 class Jet:
-    def __init__(self, screen_width: int, screen_height: int, plane_image: pygame.Surface, is_white: bool, x: int = None, y: int = None):
+    def __init__(self, screen_width: int, screen_height: int, plane_image: pygame.Surface, is_white: bool,
+                 x: int = None, y: int = None):
         self.x = x
         self.y = y
         if x is None:
@@ -66,6 +67,12 @@ class Jet:
             self.rotate_amount = -7
         self.angle += self.rotate_amount
 
+        for bullet in self.bullets:
+            if bullet.time_alive > 200:
+                self.bullets.remove(bullet)
+            else:
+                bullet.update()
+
         self.check_hits(enemy_bullets, hits_list)
 
     def check_hits(self, enemy_bullets: list, hits_list: list):
@@ -80,12 +87,10 @@ class Jet:
         self.bullets.append(bullet)
 
     def draw_bullets(self, screen: pygame.Surface) -> None:
+        print('drawwwwwwwwww')
+        print(self.bullets)
         for bullet in self.bullets:
-            bullet.update()
             bullet.draw(screen)
-
-            if bullet.time_alive > 200:
-                self.bullets.remove(bullet)
 
     def to_dict(self) -> dict:
         description = vars(self).copy()
@@ -101,6 +106,16 @@ class Jet:
         description['bullets'] = desc_bullets
         return description
 
+    def new_bullet_from_dict(self, description_dict: dict) -> None:
+        print("hello?")
+        new_bullet = Bullet(screen_width=description_dict['screen_width'],
+                            screen_height=description_dict['screen_height'],
+                            x=description_dict['x'],
+                            y=description_dict['y'],
+                            angle=description_dict['angle'],
+                            is_white=description_dict['is_white'])
+        self.bullets.append(new_bullet)
+
     def data_from_dict(self, description_dict: dict) -> None:
         self.x = description_dict['x']
         self.y = description_dict['y']
@@ -110,5 +125,6 @@ class Jet:
         self.rotate_amount = description_dict['rotate_amount']
 
         self.is_white = description_dict['is_white']
-        for i in range(len(self.bullets)):
-            self.bullets[i].data_from_dict(description_dict['bullets'][i])
+        self.bullets = []
+        for i in range(len(description_dict['bullets'])):
+            self.new_bullet_from_dict(description_dict['bullets'][i])

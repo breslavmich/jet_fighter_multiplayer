@@ -15,6 +15,7 @@ import ipaddress
 class Client:
     def __init__(self):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.__status_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.id = 0
         self.game = None
         self.server_ip = SERVER_IP
@@ -166,6 +167,11 @@ class Client:
         bt.pack()
         root.mainloop()
 
+    def disconnect(self):
+        self.build_and_send_message(chatlib.PROTOCOL_CLIENT['disconnect_msg'], '')
+        self.__socket.close()
+        exit()
+
     def request_game_obj(self) -> None or int:
         try:
             self.build_and_send_message(chatlib.PROTOCOL_CLIENT['game_status_request'], '')
@@ -173,6 +179,12 @@ class Client:
             return None
         cmd, data = self.recv_message_and_parse()
         if cmd != chatlib.PROTOCOL_SERVER['game_status_response']:
+            if cmd == chatlib.PROTOCOL_SERVER['winner_msg']:
+                if self.id == int(data):
+                    messagebox.showinfo('Game Ended!', 'Congratulations! You Won!!!')
+                else:
+                    messagebox.showinfo('Game Ended!', 'You Lost!!!')
+                self.disconnect()
             return None
         try:
             game_data = json.loads(data)
@@ -220,20 +232,16 @@ class Client:
         self.game.initialise_window()
         run = True
         while run:
-            key_up_down = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                 elif event.type == pygame.KEYDOWN:
                     key = event.key
                     self.handle_key_press(key)
-                    key_up_down = True
                 elif event.type == pygame.KEYUP:
                     key = event.key
                     self.handle_key_release(key)
-                    key_up_down = True
-            if not key_up_down:
-                self.request_game_obj()
+            self.request_game_obj()
             self.game.draw()
 
 

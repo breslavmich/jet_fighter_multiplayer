@@ -45,7 +45,7 @@ class Game:
         text1 = self.font.render(str(self.score_0), True, WHITE)
         text1_rect = text1.get_rect()
         text1_rect.center = (int(self.screen_width / 4), int(self.screen_height / 7))
-        text2 = self.font.render(str(self.score_1), True, WHITE)
+        text2 = self.font.render(str(self.score_1), True, BLACK)
         text2_rect = text2.get_rect()
         text2_rect.center = (int(3 * self.screen_width / 4), int(self.screen_height / 7))
         self.screen.blit(text1, text1_rect)

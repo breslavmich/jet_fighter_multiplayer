@@ -1,5 +1,7 @@
-# Michael Breslavsky
-# 31.08.2022
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: chatlib.py
+# Description: Dictionaries and functions to format and parse messages and data.
 
 # Protocol Constants
 CMD_FIELD_LENGTH = 16  # Exact length of cmd field (in bytes)

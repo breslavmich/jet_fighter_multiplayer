@@ -1,3 +1,7 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: constants.py
+# Description: Constants for the 'Jet Fighter' game.
 import os
 import pygame
 

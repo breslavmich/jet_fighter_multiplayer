@@ -1,3 +1,7 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: client.py
+# Description: Client side for managing the 'Jet Fighter' game
 import json
 import socket
 import threading

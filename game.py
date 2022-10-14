@@ -1,3 +1,7 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: game.py
+# Description: A game object for the 'Jet Fighter' game. Object is used both for the server and the client.
 import pygame
 from constants import BLACK_PLANE_IMG, WHITE_PLANE_IMG, SCREEN_COLOR, FPS, WHITE, BLACK
 from jet import Jet

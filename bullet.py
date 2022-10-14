@@ -1,4 +1,7 @@
-import random
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: bullet.py
+# Description: A bullet object for the 'Jet Fighter' game. Object is used both for the server and the client.
 import pygame
 from math import sin, cos, radians
 
@@ -10,7 +13,7 @@ class Bullet:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.angle = angle
-        self.speed = 4
+        self.speed = 6
         self.is_white = is_white
         self.radius = 3
         self.time_alive = 0

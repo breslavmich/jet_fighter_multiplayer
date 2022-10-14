@@ -1,3 +1,7 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: jet.py
+# Description: A jet object for the 'Jet Fighter' game. Object is used both for the server and the client.
 import math
 import random
 import pygame

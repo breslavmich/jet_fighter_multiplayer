@@ -1,3 +1,7 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: ImageLabel.py
+# Description: A label object that supports GIF format
 import tkinter as tk
 from itertools import count, cycle
 from PIL import Image, ImageTk

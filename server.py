@@ -1,8 +1,11 @@
+# Michael Breslavsky - 12A
+# 14.10.2022
+# File: server.py
+# Description: Server side for managing the 'Jet Fighter' game
 import json
 import socket
 import threading
 import time
-
 import pygame
 import select
 from game import Game
@@ -89,12 +92,12 @@ class Server:
                 self.game.planes[plane_num].rotate_amount = -ROTATE_AMOUNT
         if data == pygame.K_SPACE:
             if plane_num == 0:
-                if time.time() - self.last_shot_white < 2:
+                if time.time() - self.last_shot_white < 1.5:
                     return
                 else:
                     self.last_shot_white = time.time()
             elif plane_num == 1:
-                if time.time() - self.last_shot_black < 2:
+                if time.time() - self.last_shot_black < 1.5:
                     return
                 else:
                     self.last_shot_black = time.time()

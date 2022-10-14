@@ -111,8 +111,9 @@ class Server:
     def handle_status_message(self, client_socket: socket.socket):
         if self.winner == 0 or self.winner == 1:
             self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['winner_msg'], str(self.winner))
-        game_str = json.dumps(self.game.up_to_date_game_data())
-        self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['game_status_response'], game_str)
+        else:
+            game_str = json.dumps(self.game.up_to_date_game_data())
+            self.build_and_send_message(client_socket, chatlib.PROTOCOL_SERVER['game_status_response'], game_str)
 
     def handle_game_init_request(self, client_socket: socket.socket):
         initial_data = json.dumps(self.game.get_init_data())

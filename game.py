@@ -22,6 +22,7 @@ class Game:
         self.hits = []
 
     def initialise_jets(self, positions: list = None) -> None:
+        """Initialising the 'jet' objects for the game"""
         image_black = pygame.image.load(BLACK_PLANE_IMG)
         image_white = pygame.image.load(WHITE_PLANE_IMG)
         if len(self.planes) != 0:
@@ -38,11 +39,13 @@ class Game:
                                    plane_image=image_black, is_white=False, x=positions[2], y=positions[3]))
 
     def initialise_window(self):
+        """Creating initial game window"""
         screen_size = (self.screen_width, self.screen_height)
         self.screen = pygame.display.set_mode(screen_size)
         self.screen.fill(SCREEN_COLOR)
 
     def draw(self):
+        """Drawing all elements on the screen"""
         self.screen.fill(SCREEN_COLOR)
         for jet in self.planes:
             jet.draw(self.screen)
@@ -58,16 +61,19 @@ class Game:
         self.clock.tick(FPS)
 
     def get_init_data(self):
+        """Returning a dictionary with the initial game data"""
         return {'width': self.screen_width,
                 'height': self.screen_height,
                 'planes_pos': [self.planes[0].x, self.planes[0].y, self.planes[1].x, self.planes[1].y]}
 
     def update(self):
+        """Updating the game"""
         for i in range(len(self.planes)):
             plane = self.planes[i]
-            plane.update(self.planes[1 - i].bullets, self.hits)
+            plane.update(self.planes[1 - i].bullets, self.hits)  # Updating each airplane
 
     def up_to_date_game_data(self):
+        """Returning the current game data"""
         description_dict = {
             'score_0': self.score_0,
             'score_1': self.score_1,

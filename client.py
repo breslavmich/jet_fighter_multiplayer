@@ -149,13 +149,14 @@ class Client:
             root.destroy()
             if self.id == 0:
                 waiting_screen = tk.Tk()
-                waiting_screen.geometry("500x400")
+                waiting_screen.geometry("400x400")
                 waiting_screen.overrideredirect(True)
                 waiting_screen.eval('tk::PlaceWindow . center')
+                waiting_screen.configure(bg='white')
                 result = []
                 wait = threading.Thread(target=wait_start_msg, args=[result])
                 wait.start()
-                tk.Label(text="Waiting for opponent to connect", font=('Calibri Bold', 25)).pack()
+                tk.Label(text="Waiting for opponent to connect", font=('Calibri Bold', 20), background='white').pack()
                 img = ImageLabel()
                 img.pack()
                 img.load(LOADING_IMG)
@@ -216,11 +217,21 @@ class Client:
             return None
 
     def handle_key_press(self, key: int):
+        if self.id == 1:
+            if key == pygame.K_RIGHT:
+                key = pygame.K_d
+            elif key == pygame.K_LEFT:
+                key = pygame.K_a
         if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS) \
                 or key == pygame.K_SPACE:
             self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_down_msg'], str(key))
 
     def handle_key_release(self, key: int):
+        if self.id == 1:
+            if key == pygame.K_RIGHT:
+                key = pygame.K_d
+            elif key == pygame.K_LEFT:
+                key = pygame.K_a
         if (self.id == 0 and key in WHITE_CONTROLS) or (self.id == 1 and key in BLACK_CONTROLS):
             self.build_and_send_message(chatlib.PROTOCOL_CLIENT['key_up_msg'], str(key))
 
@@ -248,6 +259,7 @@ class Client:
                     self.handle_key_release(key)
             self.request_game_obj()
             self.game.draw()
+        self.disconnect()
 
 
 if __name__ == '__main__':

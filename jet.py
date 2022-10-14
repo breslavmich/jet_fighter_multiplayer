@@ -77,7 +77,7 @@ class Jet:
 
     def check_hits(self, enemy_bullets: list, hits_list: list):
         for bullet in enemy_bullets:
-            if math.dist((self.x, self.y), (bullet.x, bullet.y)) < 10 + bullet.radius:
+            if math.dist((self.x + self.image.get_width() / 2, self.y + self.image.get_height() / 2), (bullet.x, bullet.y)) < 10 + bullet.radius:
                 hits_list.append(bullet)
                 enemy_bullets.remove(bullet)
 
@@ -87,8 +87,6 @@ class Jet:
         self.bullets.append(bullet)
 
     def draw_bullets(self, screen: pygame.Surface) -> None:
-        print('drawwwwwwwwww')
-        print(self.bullets)
         for bullet in self.bullets:
             bullet.draw(screen)
 
@@ -107,7 +105,6 @@ class Jet:
         return description
 
     def new_bullet_from_dict(self, description_dict: dict) -> None:
-        print("hello?")
         new_bullet = Bullet(screen_width=description_dict['screen_width'],
                             screen_height=description_dict['screen_height'],
                             x=description_dict['x'],

@@ -16,7 +16,7 @@ class ImageLabel(tk.Label):
 
         try:
             for i in count(1):
-                frames.append(ImageTk.PhotoImage(im.copy().resize((500, 177), Image.ANTIALIAS)))
+                frames.append(ImageTk.PhotoImage(im.copy()))
                 im.seek(i)
         except EOFError:
             pass
